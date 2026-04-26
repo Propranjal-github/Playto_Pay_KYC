@@ -90,23 +90,25 @@ export default function Login({ onLogin }) {
         </div>
 
         {/* Test creds */}
-        <div className="glass-card" style={{ padding: 20, marginTop: 20 }}>
-          <p style={{ fontSize: 11, fontWeight: 700, color: "#475569", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 10 }}>
-            Demo Credentials
-          </p>
-          <div style={{ display: "grid", gap: 6, fontSize: 12 }}>
-            {[
-              ["Merchant", "merchant_alice / alice123"],
-              ["Merchant", "merchant_bob / bob12345"],
-              ["Reviewer", "reviewer_charlie / charlie123"],
-            ].map(([role, cred], i) => (
-              <div key={i} style={{ display: "flex", gap: 8 }}>
-                <span style={{ color: "#64748b", minWidth: 64 }}>{role}:</span>
-                <span style={{ color: "#94a3b8", fontFamily: "monospace" }}>{cred}</span>
-              </div>
-            ))}
+        {!isRegister && (
+          <div className="glass-card animate-fade-in" style={{ padding: 20, marginTop: 20 }}>
+            <p style={{ fontSize: 11, fontWeight: 700, color: "#475569", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 10 }}>
+              Demo Credentials
+            </p>
+            <div style={{ display: "grid", gap: 6, fontSize: 12 }}>
+              {[
+                ["Merchant", "merchant_alice / alice123"],
+                ["Merchant", "merchant_bob / bob12345"],
+                ["Reviewer", "reviewer_charlie / charlie123"],
+              ].map(([role, cred], i) => (
+                <div key={i} style={{ display: "flex", gap: 8 }}>
+                  <span style={{ color: "#64748b", minWidth: 64 }}>{role}:</span>
+                  <span style={{ color: "#94a3b8", fontFamily: "monospace" }}>{cred}</span>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
