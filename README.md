@@ -17,13 +17,14 @@ A full-stack KYC (Know Your Customer) pipeline where **merchants** submit person
 
 - **Multi-step KYC form** — Personal details → Business details → Document upload → Review & Submit
 - **Drag-and-Drop file uploads** — Modern component with visual drag states for document drop zones
-- **Reviewer Round-Robin** — Auto-assigns new submissions evenly among available reviewers
+- **Reviewer Round-Robin & Visibility** — Reviewers can see all submissions (satisfying base requirements), but new submissions are auto-assigned to specific reviewers (bonus requirement). The UI prominently highlights an `Assignee` column.
+- **Strict Business Logic Validations** — The API strictly requires exactly 3 specific documents (PAN, Aadhaar, Bank Statement) and a `monthly_volume_usd` before allowing a KYC submission. Rejections and info-requests strictly require a written reason.
 - **State machine enforcement** — All transitions validated in a single module (`kyc/state_machine.py`)
 - **File upload validation** — Magic bytes detection (not just extension), 5 MB limit, PDF/JPG/PNG only
 - **Reviewer dashboard** — Queue with SLA tracking, metrics (avg wait time, approval rate), approve/reject/request more info
 - **SLA at-risk flag** — Dynamically computed (>24h in queue), no stored flag
 - **Notification logging** — Every state transition creates a notification record
-- **Role-based access** — Merchants see only their own submissions; reviewers see their assigned queues
+- **Role-based access** — Merchants strictly see only their own submissions; reviewers can access the entire reviewer dashboard.
 
 ## Quick Start
 
