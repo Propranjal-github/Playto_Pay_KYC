@@ -164,8 +164,8 @@ export default function MerchantKYC() {
               <ReviewField label="Volume" value={form.monthly_volume_usd ? `$${form.monthly_volume_usd}/mo` : null} />
             </ReviewSection>
             <ReviewSection title={`Documents (${documents.length}/3)`}>
-              {documents.length === 0 ? <p style={{ fontSize: 13, color: "#fca5a5" }}>No documents — at least one required</p>
-                : documents.map(d => <div key={d.id} style={{ fontSize: 13, color: "#6ee7b7", padding: "4px 0" }}>✓ {d.doc_type.replace("_"," ")} — {d.original_filename}</div>)}
+              {documents.length < 3 ? <p style={{ fontSize: 13, color: "#fca5a5" }}>Missing required documents ({documents.length}/3 uploaded)</p>
+                : documents.map(d => <div key={d.id} style={{ fontSize: 13, color: "#6ee7b7", padding: "4px 0", textTransform: "capitalize" }}>✓ {d.doc_type.replace("_"," ")} — {d.original_filename}</div>)}
             </ReviewSection>
           </div>
         )}
@@ -176,7 +176,7 @@ export default function MerchantKYC() {
           <div style={{ display: "flex", gap: 10 }}>
             {!ro && step < 3 && <button onClick={saveDraft} className="btn-outline" disabled={saving}>{saving ? <span className="spinner" style={{width:14,height:14}} /> : "Save Draft"}</button>}
             {step < 3 ? <button onClick={handleNext} className="btn-primary">Next →</button>
-              : !ro ? <button onClick={handleSubmit} className="btn-success" disabled={submitting || documents.length === 0}>{submitting && <span className="spinner" style={{width:14,height:14}} />}Submit for Review</button> : null}
+              : !ro ? <button onClick={handleSubmit} className="btn-success" disabled={submitting || documents.length < 3}>{submitting && <span className="spinner" style={{width:14,height:14}} />}Submit for Review</button> : null}
           </div>
         </div>
       </div>

@@ -186,7 +186,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         submission = self.get_object()
 
         # Validate required fields before submission
-        required = ["full_name", "email", "phone", "business_name", "business_type"]
+        required = ["full_name", "email", "phone", "business_name", "business_type", "monthly_volume_usd"]
         missing = [f for f in required if not getattr(submission, f)]
         if missing:
             return Response(
@@ -198,13 +198,16 @@ class SubmissionViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check at least one document is uploaded
-        if not submission.documents.exists():
+        # Check that all 3 required documents are uploaded
+        uploaded_docs = set(submission.documents.values_list("doc_type", flat=True))
+        required_docs = {"pan", "aadhaar", "bank_statement"}
+        missing_docs = required_docs - uploaded_docs
+        if missing_docs:
             return Response(
                 {
                     "error": "Incomplete Submission",
-                    "detail": "At least one document must be uploaded before submitting.",
-                    "code": "no_documents",
+                    "detail": f"Missing required documents: {', '.join(missing_docs)}",
+                    "code": "missing_documents",
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -303,7 +306,6 @@ class ReviewQueueViewSet(viewsets.GenericViewSet):
             KYCSubmission.objects.filter(
                 status__in=["submitted", "under_review", "approved", "rejected", "more_info_requested"]
             )
-            .filter(Q(reviewer=self.request.user) | Q(reviewer__isnull=True))
             .annotate(
                 document_count=Count("documents"),
                 is_at_risk=Case(
@@ -446,7 +448,17 @@ class ReviewQueueViewSet(viewsets.GenericViewSet):
 
         action_serializer = SubmissionActionSerializer(data=request.data)
         action_serializer.is_valid(raise_exception=True)
-        reason = action_serializer.validated_data.get("reason", "")
+        reason = action_serializer.validated_data.get("reason", "").strip()
+
+        if new_state in ("rejected", "more_info_requested") and not reason:
+            return Response(
+                {
+                    "error": "Reason Required",
+                    "detail": f"You must provide a reason when changing status to '{new_state}'.",
+                    "code": "reason_required",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         try:
             submission.transition_to(
