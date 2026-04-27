@@ -9,6 +9,7 @@ export default function ReviewerDashboard() {
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("");
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
   useEffect(() => { loadData(); }, [filter]);
 
@@ -75,20 +76,33 @@ export default function ReviewerDashboard() {
           <table className="data-table">
             <thead>
               <tr>
-                <th>ID</th><th>Merchant</th><th>Business</th><th>Status</th><th>In Queue</th><th>Submitted</th>
+                <th>ID</th><th>Merchant</th><th>Business</th><th>Assignee</th><th>Status</th><th>In Queue</th><th>Submitted</th>
               </tr>
             </thead>
             <tbody>
-              {submissions.map(sub => (
+              {submissions.map(sub => {
+                const isMe = sub.reviewer_name === currentUser.username;
+                return (
                 <tr key={sub.id} onClick={() => navigate(`/reviewer/submission/${sub.id}`)}>
                   <td style={{ fontWeight: 700, color: "#a5b4fc" }}>#{sub.id}</td>
                   <td style={{ fontWeight: 600, color: "white" }}>{sub.merchant_name}</td>
                   <td>{sub.business_name || "—"}</td>
+                  <td>
+                    {sub.reviewer_name ? (
+                      <span style={{ 
+                        padding: "4px 8px", borderRadius: 6, fontSize: 11, fontWeight: 600,
+                        background: isMe ? "rgba(99,102,241,0.2)" : "rgba(51,65,85,0.4)",
+                        color: isMe ? "#818cf8" : "#94a3b8"
+                      }}>
+                        {isMe ? "You" : sub.reviewer_name}
+                      </span>
+                    ) : <span style={{ color: "#64748b", fontSize: 12 }}>Unassigned</span>}
+                  </td>
                   <td><StatusBadge status={sub.status} isAtRisk={sub.is_at_risk} /></td>
                   <td>{sub.hours_in_queue ? fmtH(sub.hours_in_queue) : "—"}</td>
                   <td style={{ fontSize: 13 }}>{sub.submitted_at ? new Date(sub.submitted_at).toLocaleString() : "—"}</td>
                 </tr>
-              ))}
+              )})}
             </tbody>
           </table>
         </div>

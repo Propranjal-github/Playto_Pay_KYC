@@ -99,6 +99,9 @@ class KYCSubmissionListSerializer(serializers.ModelSerializer):
     merchant_name = serializers.CharField(
         source="merchant.username", read_only=True
     )
+    reviewer_name = serializers.CharField(
+        source="reviewer.username", read_only=True, default=None
+    )
     document_count = serializers.IntegerField(read_only=True)
     is_at_risk = serializers.BooleanField(read_only=True, required=False)
     hours_in_queue = serializers.SerializerMethodField()
@@ -109,6 +112,7 @@ class KYCSubmissionListSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "merchant_name",
+            "reviewer_name",
             "status",
             "full_name",
             "business_name",
