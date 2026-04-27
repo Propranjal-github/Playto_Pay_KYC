@@ -2,7 +2,7 @@
 
 A full-stack KYC (Know Your Customer) pipeline where **merchants** submit personal/business details and documents, and **reviewers** approve or reject them. Built for the Playto Founding Engineering Intern Challenge.
 
-👉 **Live Demo:** [https://playto-pay-kyc.vercel.app/login](https://playto-pay-kyc.vercel.app/login)
+👉 **Live Demo:** [https://playto-pay-kyc.vercel.app](https://playto-pay-kyc.vercel.app)
 
 ## Tech Stack
 
